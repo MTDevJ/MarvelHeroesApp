@@ -37,6 +37,7 @@ public class HeroesParser {
                         heroesLinks.put(element.text(), element.attr("href"))
 
             );
+
             String nextPage = document.selectFirst("div.category-page__pagination")
                     .getElementsByClass("category-page__pagination-next wds-button wds-is-secondary")
                     .first()
@@ -50,7 +51,7 @@ public class HeroesParser {
         } catch (IOException  e) {
             e.printStackTrace();
         }catch (NullPointerException  e) {
-            e.printStackTrace();
+            System.out.println("Все страницы выгружены!");
         }
 
         return heroesLinks;
