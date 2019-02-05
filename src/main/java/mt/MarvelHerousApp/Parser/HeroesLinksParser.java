@@ -71,19 +71,32 @@ public class HeroesLinksParser {
     }
 
     private static String getKind(Element element) {
-        return "--";
+        String kind = element.getElementsByAttributeValue("data-source","Вид")
+                .first()
+                .getElementsByClass("pi-data-value pi-font")
+                .text();
+        return !kind.isEmpty()? kind : "-Информация отсутствует-";
     }
 
     private static String getNickName(Element element) {
-        return "--";
+        String nickName = element.getElementsByAttributeValue("data-source","Прозвище").text();
+        return !nickName.isEmpty()? nickName : "-Информация отсутствует-";
     }
 
     private static String getImageLink(Element element) {
-        return "--";
+        Element imageElement = element.getElementsByAttributeValue("data-source","Картинка")
+                .first();
+
+         String imageURL = imageElement
+                .child(0)
+                .absUrl("href");
+
+        return !imageURL.isEmpty() ? imageURL : "-Изображение отсутствует-";
     }
 
     private static String getName(Element element) {
-        return "--";
+       String name = element.getElementsByAttributeValue("data-source","Имя").text();
+        return !name.isEmpty()? name : "-Информация отсутствует-";
     }
 
     public static void main(String[] args) {
@@ -95,9 +108,9 @@ public class HeroesLinksParser {
         List<String> heroesLinks = new ArrayList<>();
         heroesLinks = parser.parseLinks(parser.urlLink, heroesLinks);
 
-       // for (String link : heroesLinks){
-            Hero hero = getHero(heroesLinks.get(0));
+        /*for (int i = 0; i < 5; i++) {
+            Hero hero = getHero(heroesLinks.get(i));
             System.out.println(hero.toString());
-       // }
+        }*/
     }
 }

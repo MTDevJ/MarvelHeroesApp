@@ -66,8 +66,9 @@ public class Hero {
 
     @Override
     public String toString() {
-        return  "Hero : " + name + "\n" +
-                "Прозвище = " + nickname + "\n" +
-                "Вид = " + kind + "\n";
+        return   "___Персонаж___" + "\n" +
+                "Имя; : " + name + "\n" +
+                "Прозвище : " + nickname + "\n" +
+                "Вид : " + kind + "\n";
     }
 }
