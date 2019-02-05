@@ -1,6 +1,10 @@
 package mt.MarvelHerousApp.Parser;
 
 import mt.MarvelHerousApp.MVC.Entity.Hero;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -12,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HeroesLinksParser {
+    private static final Logger logger = LogManager.getLogger(HeroesLinksParser.class.getName());
     private String urlLink;
     public String getUrlLink() {
         return urlLink;
@@ -22,6 +27,7 @@ public class HeroesLinksParser {
     }
 
     private List<String> parseLinks(String url, List<String> heroesLinks){
+        logger.info("Start parsing");
         try {
             Document document = Connector.getDocument(url);
             Elements heroesLinksElements = document.getElementsByClass("category-page__members")
@@ -44,16 +50,18 @@ public class HeroesLinksParser {
             return heroesLinks;
 
         } catch (IOException  e) {
+            logger.error("IOException error", e);
             e.printStackTrace();
         }catch (NullPointerException  e) {
-            System.out.println("Все страницы выгружены! Количество ссылок - " + heroesLinks.size());
+            logger.error("NullPointerException error", e);
+            logger.info("Все страницы выгружены! Количество ссылок - " + heroesLinks.size());
         }
+        logger.info("Parsing is done");
         return heroesLinks;
     }
 
     private static Hero getHero(String heroLink) {
         Hero hero = new Hero();
-
         try {
             Document document = Connector.getDocument(heroLink);
             Element element = document.getElementsByTag("aside").first();
@@ -65,6 +73,7 @@ public class HeroesLinksParser {
                 hero.setKind(getKind(element));
             }
         } catch (IOException e) {
+            logger.error("IOException error", e);
             e.printStackTrace();
         }
         return hero;
@@ -78,6 +87,7 @@ public class HeroesLinksParser {
                     .getElementsByClass("pi-data-value pi-font")
                     .text();
         } catch (NullPointerException e) {
+            logger.error("NullPointerException error", e);
             return "-Информация отсутствует-";
         }
         return !kind.isEmpty()? kind : "-Информация отсутствует-";
@@ -99,6 +109,7 @@ public class HeroesLinksParser {
                    .child(0)
                    .absUrl("href");
         } catch (NullPointerException e) {
+            logger.error("NullPointerException error", e);
             return "-Изображение отсутствует-";
         }
         return !imageURL.isEmpty() ? imageURL : "-Изображение отсутствует-";
@@ -110,15 +121,16 @@ public class HeroesLinksParser {
     }
 
     private static List<Hero> getHeroes(List<String> heroesLinks) {
+        logger.info("Start collecting heroes");
         List<Hero> heroes = new ArrayList<>();
         heroesLinks.forEach(link -> {
             Hero hero = getHero(link);
            if (hero.getName() != null) {
                heroes.add(hero);
-               System.out.println("Персонаж " + hero.getName() + "добавлен в список");
+               logger.info("Персонаж " + hero.getName() + "добавлен в список");
            }
         });
-
+        logger.info("Collecting heroes is done");
         return heroes;
     }
 
@@ -134,6 +146,5 @@ public class HeroesLinksParser {
         List<Hero> heroes = getHeroes(heroesLinks);
 
         System.out.println("Итого персонажей " + heroes.size());
-
     }
 }
